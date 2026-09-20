@@ -1,0 +1,54 @@
+package pdf.style
+
+class PdfColor {
+    Int red
+    Int green
+    Int blue
+
+    constructor(Int red, Int green, Int blue) {
+        validate(red)
+        validate(green)
+        validate(blue)
+        this.red = red
+        this.green = green
+        this.blue = blue
+    }
+
+    constructor(String hex) {
+        var value = hex
+        if (value.startsWith("#")) {
+            value = value.substring(1, value.length)
+        }
+
+        if (value.length != 6) {
+            throw "A cor hexadecimal precisa usar o formato RRGGBB"
+        }
+
+        this.red = parsePair(value, 0)
+        this.green = parsePair(value, 2)
+        this.blue = parsePair(value, 4)
+    }
+
+    validate(Int component) {
+        if (component < 0 || component > 255) {
+            throw "Os componentes RGB precisam estar entre 0 e 255"
+        }
+    }
+
+    parsePair(String value, Int index): Int {
+        return hexDigit(value.charAt(index)) * 16 + hexDigit(value.charAt(index + 1))
+    }
+
+    hexDigit(Int code): Int {
+        if (code >= 48 && code <= 57) {
+            return code - 48
+        }
+        if (code >= 65 && code <= 70) {
+            return code - 55
+        }
+        if (code >= 97 && code <= 102) {
+            return code - 87
+        }
+        throw "A cor hexadecimal contém um caractere inválido"
+    }
+}

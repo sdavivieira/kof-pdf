@@ -1,0 +1,43 @@
+package pdf.style
+
+import pdf.style.PdfColor
+import pdf.style.Colors
+import pdf.style.TextAlign
+
+class TextStyle {
+    Int size
+    PdfColor color
+    TextAlign alignment
+
+    constructor() {
+        size = 12
+        color = Colors.black
+        alignment = TextAlign.left
+    }
+
+    fontSize(Int value): TextStyle {
+        if (value <= 0) {
+            throw "O tamanho da fonte precisa ser maior que zero"
+        }
+        size = value
+        return this
+    }
+
+    fontColor(PdfColor value): TextStyle {
+        color = value
+        return this
+    }
+
+    align(TextAlign value): TextStyle {
+        alignment = value
+        return this
+    }
+
+    copy(): TextStyle {
+        var result = TextStyle()
+        result.size = size
+        result.color = color
+        result.alignment = alignment
+        return result
+    }
+}
