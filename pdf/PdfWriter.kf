@@ -1,0 +1,62 @@
+package pdf
+
+class PdfWriter {
+    write(String path, String contentStream) {
+        var objects = listOf<String>()
+
+        objects.add("<< /Type /Catalog /Pages 2 0 R >>")
+        objects.add("<< /Type /Pages /Kids [3 0 R] /Count 1 >>")
+        objects.add(
+            "<< /Type /Page " +
+            "/Parent 2 0 R " +
+            "/MediaBox [0 0 595 842] " +
+            "/Resources << /Font << /F1 4 0 R >> >> " +
+            "/Contents 5 0 R >>"
+        )
+        objects.add(
+            "<< /Type /Font " +
+            "/Subtype /Type1 " +
+            "/BaseFont /Helvetica " +
+            "/Encoding /WinAnsiEncoding >>"
+        )
+        objects.add(
+            "<< /Length " + contentStream.length + " >>\n" +
+            "stream\n" + contentStream + "endstream"
+        )
+
+        var pdf = "%PDF-1.4\n"
+        var offsets = listOf<Int>()
+
+        for (var index = 0; index < objects.size; index++) {
+            offsets.add(pdf.length)
+            pdf = pdf + (index + 1) + " 0 obj\n" +
+                objects.get(index) + "\nendobj\n"
+        }
+
+        var xrefOffset = pdf.length
+        pdf = pdf + "xref\n0 " + (objects.size + 1) + "\n"
+        pdf = pdf + "0000000000 65535 f \n"
+
+        for (var offset in offsets) {
+            pdf = pdf + padOffset(offset) + " 00000 n \n"
+        }
+
+        pdf = pdf + "trailer\n<< /Size " + (objects.size + 1) +
+            " /Root 1 0 R >>\n"
+        pdf = pdf + "startxref\n" + xrefOffset + "\n%%EOF\n"
+
+        if (!File(path).writeText(pdf)) {
+            throw "Não foi possível salvar o PDF em " + path
+        }
+    }
+
+    padOffset(Int offset): String {
+        var value = "" + offset
+
+        while (value.length < 10) {
+            value = "0" + value
+        }
+
+        return value
+    }
+}
