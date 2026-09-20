@@ -1,0 +1,14 @@
+# PDFs gerados pelos exemplos
+*.pdf
+
+# Saídas de compilação
+build/
+out/
+*.class
+*.jar
+
+# Editores e sistema operacional
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

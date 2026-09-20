@@ -1,0 +1,64 @@
+import pdf.PdfDocument
+import pdf.style.Colors
+import pdf.style.GridStyle
+import pdf.style.TextAlign
+import pdf.style.TextStyle
+
+record Pessoa(String nome, Int idade, String cidade, String profissao)
+
+main() {
+    var pdf = PdfDocument()
+
+    pdf.title("Relatório de usuários", 40, 802)
+        .fontSize(24)
+        .fontColor(Colors.blueMedium)
+        .width(515)
+        .align(TextAlign.center)
+
+    pdf.text("Lista de usuários cadastrados", 40, 760)
+        .fontSize(12)
+        .fontColor(Colors.greyDark)
+
+    var pessoas = listOf<Pessoa>(
+        Pessoa("Davi", 25, "Juiz de Fora", "Engenheiro"),
+        Pessoa("Maria", 30, "São Paulo", "Médica"),
+        Pessoa("João", 28, "Rio de Janeiro", "Professor"),
+        Pessoa("Ana", 22, "Belo Horizonte", "Designer")
+    )
+
+    var linhas = pessoas.map((pessoa: Pessoa) -> listOf(
+        pessoa.nome(),
+        "" + pessoa.idade(),
+        pessoa.cidade(),
+        pessoa.profissao()
+    ))
+
+    var gridStyle = GridStyle()
+        .rowHeight(30)
+        .padding(6)
+        .borderWidth(1)
+        .borderColor(Colors.greyMedium)
+        .headerBackground(Colors.blueMedium)
+        .cellBackground(Colors.white)
+        .headerStyle(
+            TextStyle()
+                .fontSize(11)
+                .fontColor(Colors.white)
+                .align(TextAlign.center)
+        )
+        .cellStyle(
+            TextStyle()
+                .fontSize(10)
+                .fontColor(Colors.greyDark)
+                .align(TextAlign.left)
+        )
+
+    pdf.grid(4)
+        .widths(listOf(140, 50, 170, 155))
+        .style(gridStyle)
+        .header(listOf("Nome", "Idade", "Cidade", "Profissão"))
+        .rows(linhas)
+
+    pdf.save("relatorio.pdf")
+    println("PDF gerado em relatorio.pdf")
+}
